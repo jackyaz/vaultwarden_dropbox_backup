@@ -11,9 +11,8 @@ RUN apk add --no-cache \
     tzdata \
     openssl
 
-# install dropbox uploader script
-RUN curl "https://raw.githubusercontent.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh" -o dropbox_uploader.sh && \
-    chmod +x dropbox_uploader.sh
+# copy dropbox uploader script
+COPY dropbox_uploader.sh /
 
 # set timezone from ENVs
 RUN export TZ=/usr/share/zoneinfo/${TZ}
@@ -30,6 +29,7 @@ COPY deleteold.sh /
 # give execution permission to scripts
 RUN chmod +x /entrypoint.sh && \
     chmod +x /backup.sh && \
+    chmod +x /dropbox_uploader.sh && \
     chmod +x /deleteold.sh
 
 RUN echo "0 1 * * * /backup.sh" > /etc/crontabs/root
