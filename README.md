@@ -1,14 +1,14 @@
-# BitWarden_RS Dropbox Nightly Backup
-Run this image alongside your bitwarden_rs container for automated nightly (1AM UTC) backups of your BitWarden database and your attachments to your Dropbox account. Backups are encrypted (OpenSSL AES256) and zipped (`.tar.gz`) with a passphrase of your choice.
+# Vaultwarden Dropbox Nightly Backup
+Run this image alongside your Vaultwarden container for automated nightly (1AM UTC) backups of your Vaultwarden database and your attachments to your Dropbox account. Backups are encrypted (OpenSSL AES256) and zipped (`.tar.gz`) with a passphrase of your choice.
 
-**IMPORTANT: Make sure you have at least one personal device (e.g. laptop) connected to Dropbox and syncing files locally. This will save you in the event Bitwarden goes down and your Dropbox account login was stored in Bitwarden!!!**
+**IMPORTANT: Make sure you have at least one personal device (e.g. laptop) connected to Dropbox and syncing files locally. This will save you in the event Vaultwarden goes down and your Dropbox account login was stored in Vaultwarden!!!**
 
-**Note:** Encrypting BitWarden backups is not required since the data is already encrypted with user master passwords. We've added this for good practice and added obfuscation should your Dropbox account get compromised.
+**Note:** Encrypting Vaultwarden backups is not required since the data is already encrypted with user master passwords. We've added this for good practice and added obfuscation should your Dropbox account get compromised.
 
 ## How to Use
 - It's highly recommend you run via the `docker-compose.yml` provided.
-- Pre-built images are available at `shivpatel/bitwarden_rs_dropbox_backup`.
-- Volume mount the `./bwdata` folder your bitwarden_rs container uses.
+- Pre-built images are available at `jackyaz/vaultwarden_dropbox_backup`.
+- Volume mount the `./bwdata` folder your vaultwarden container uses.
 - Volume mount the `./config` folder that will contain the Dropbox Uploader configuration (Dropbox app key, secret and refresh token). See Initial setup for more details.
 - Pick a secure `BACKUP_ENCRYPTION_KEY`. This is for added protection and will be needed when decrypting your backups.
 - Follow the steps below to grant upload access to your Dropbox account.
@@ -36,5 +36,5 @@ Run this image alongside your bitwarden_rs container for automated nightly (1AM 
 ### Decrypting Backup
 `openssl enc -d -aes256 -salt -pbkdf2 -in mybackup.tar.gz | tar xz --strip-components=1 -C my-folder`
 
-### Restoring Backup to BitWarden_RS
-Volume mount the decrypted `./bwdata` folder to your bitwarden_rs container. Done!
+### Restoring Backup to Vaultwarden
+Volume mount the decrypted `./bwdata` folder to your vaultwarden container. Done!
