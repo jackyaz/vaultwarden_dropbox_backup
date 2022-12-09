@@ -27,8 +27,7 @@ Run this image alongside your Vaultwarden container for automated nightly (1AM U
 7. Now, click on the "Submit" button.
 8. Once your app is created, you can find your "App key" and "App secret" in the "Settings" tab.
 9. Run the container in interactive mode (`docker run -it <...>`) to create the configuration. 
-    
-    If you are using a GUI like Portainer to create the container, you will need to attach to the container. The first input to provide once attached is the App key.
+   If you are using a GUI like Portainer to create the container, you will need to attach to the container. The first input to provide once attached is the App key.
 
 10. Follow the steps in the terminal.
 11. Press `Ctrl+P` followed by `Ctrl+Q` to exit interactive mode / detach and keep the container running.
