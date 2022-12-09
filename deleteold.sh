@@ -3,7 +3,7 @@
 # Seconds since epoch for current time
 DATE_NOW=$(date +%s)
 
-/dropbox_uploader.sh -f /config/.dropbox_uploader list | grep "bitwardenrs_" | while read -r LINE; do
+/dropbox_uploader.sh -f /config/.dropbox_uploader list | grep "vaultwarden_" | while read -r LINE; do
   # example "LINE":
   # [F] 6688 db.sqlite3_2021-01-02-063033_1609569033.tar.gz"
 
