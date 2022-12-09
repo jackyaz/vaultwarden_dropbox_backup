@@ -96,7 +96,6 @@ fi
 # Look for optional config file parameter
 while getopts ":qpskdhf:x:" opt; do
     case $opt in
-
     f)
       CONFIG_FILE=$OPTARG
     ;;
@@ -138,7 +137,6 @@ while getopts ":qpskdhf:x:" opt; do
       echo "Option -$OPTARG requires an argument." >&2
       exit 1
     ;;
-
   esac
 done
 
@@ -569,7 +567,6 @@ function db_upload_file
     else
         db_simple_upload_file "$FILE_SRC" "$FILE_DST"
     fi
-
 }
 
 # Simple file upload
@@ -1260,7 +1257,6 @@ function db_monitor_nonblock
     check_http_response
 
     if grep -q "^HTTP/[12].* 200" "$RESPONSE_FILE"; then
-
         local CURSOR=$(sed -n 's/.*"cursor": *"\([^"]*\)".*/\1/p' "$RESPONSE_FILE")
 
         ensure_accesstoken
@@ -1293,7 +1289,6 @@ function db_monitor_nonblock
 
             # For each entry, printing directories...
             while read -r line; do
-
                 local FILE=${line%:*}
                 local META=${line##*:}
                 local TYPE=${META%;*}
@@ -1312,12 +1307,10 @@ function db_monitor_nonblock
                     FILE=$(echo -e "$FILE")
                     $PRINTF " [-] %s\n" "$FILE"
                 fi
-
             done < "$OUT_FILE"
 
             rm -fr "$OUT_FILE"
         fi
-
     else
         ERROR_STATUS=1
         return 1
@@ -1527,7 +1520,6 @@ function db_sha_local
 
 # CHECKING FOR AUTH FILE
 if [[ -e $CONFIG_FILE ]]; then
-
     # Loading data...
     source "$CONFIG_FILE" 2>/dev/null
 
@@ -1546,7 +1538,6 @@ if [[ -e $CONFIG_FILE ]]; then
         remove_temp_files
         exit 1
     fi
-
 # NEW SETUP...
 else
     echo -ne "\n This is the first time you run this script, please follow the instructions:\n\n"
@@ -1612,7 +1603,6 @@ argnum=$(( $#-OPTIND ))
 
 # CHECKING PARAMS VALUES
 case $COMMAND in
-
     upload)
         if [[ $argnum -lt 2 ]]; then
             usage
@@ -1758,7 +1748,6 @@ case $COMMAND in
         fi
         usage
     ;;
-
 esac
 
 remove_temp_files
