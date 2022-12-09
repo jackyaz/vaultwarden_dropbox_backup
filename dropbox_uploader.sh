@@ -21,6 +21,7 @@
 
 # shellcheck disable=SC1090
 # shellcheck disable=SC2001
+# shellcheck disable=SC2034
 # shellcheck disable=SC2155
 
 # Default configuration file
@@ -1523,14 +1524,6 @@ if [[ -e $CONFIG_FILE ]]; then
     # Loading data...
     source "$CONFIG_FILE" 2>/dev/null
 
-    # Checking if it's still a v1 API configuration file
-    if [[ $CONFIGFILE_VERSION != "2.0" ]]; then
-        echo -ne "The config file contains the old deprecated v1 or v2 oauth tokens.\n"
-        echo -ne "Please run again the script and follow the configuration wizard. The old configuration file has been backed up to $CONFIG_FILE.old\n"
-        mv "$CONFIG_FILE" "$CONFIG_FILE".old
-        exit 1
-    fi
-
     # Checking loaded data
     if [[ $OAUTH_APP_KEY = "" || $OAUTH_APP_SECRET = "" || $OAUTH_REFRESH_TOKEN = "" ]]; then
         echo -ne "Error loading data from $CONFIG_FILE...\n"
@@ -1540,49 +1533,19 @@ if [[ -e $CONFIG_FILE ]]; then
     fi
 # NEW SETUP...
 else
-    echo -ne "\n This is the first time you run this script, please follow the instructions:\n\n"
-    echo -ne "(note: Dropbox will change their API on 2021-09-30.\n"
-    echo -ne "When using dropbox_uploader.sh configured in the past with the old API, have a look at README.md, before continue.)\n\n"
-    echo -ne " 1) Open the following URL in your Browser, and log in using your account: $APP_CREATE_URL\n"
-    echo -ne " 2) Click on \"Create App\", then select \"Choose an API: Scoped Access\"\n"
-    echo -ne " 3) \"Choose the type of access you need: App folder\"\n"
-    echo -ne " 4) Enter the \"App Name\" that you prefer (e.g. MyUploader$RANDOM$RANDOM$RANDOM), must be unique\n\n"
-    echo -ne " Now, click on the \"Create App\" button.\n\n"
-    echo -ne " 5) Now the new configuration is opened, switch to tab \"permissions\" and check \"files.metadata.read/write\" and \"files.content.read/write\"\n"
-    echo -ne " Now, click on the \"Submit\" button.\n\n"
-    echo -ne " 6) Now to tab \"settings\" and provide the following information:\n"
+    echo -ne "\n Running first time setup to retrieve Dropbox refresh token...\n\n"
 
-    echo -ne " App key: "
-    read -r OAUTH_APP_KEY
-
-    echo -ne " App secret: "
-    read -r OAUTH_APP_SECRET
-
-    url="${API_OAUTH_AUTHORIZE}?client_id=${OAUTH_APP_KEY}&token_access_type=offline&response_type=code"
-    echo -ne "  Open the following URL in your Browser and allow suggested permissions: ${url}\n"
-    echo -ne " Please provide the access code: "
-    read -r access_code
-
-    echo -ne "\n > App key: ${OAUTH_APP_KEY}\n"
-    echo -ne " > App secret: '${OAUTH_APP_SECRET}\n"
-    echo -ne " > Access code: '${access_code}'. Looks ok? [y/N]: "
-    read -r answer
-    if [[ $answer != "y" ]]; then
-        remove_temp_files
-        exit 1
-    fi
-
-    $CURL_BIN $CURL_ACCEPT_CERTIFICATES $API_OAUTH_TOKEN -d code="$access_code" -d grant_type=authorization_code -u "$OAUTH_APP_KEY:$OAUTH_APP_SECRET" -o "$RESPONSE_FILE" 2>/dev/null
+    $CURL_BIN $CURL_ACCEPT_CERTIFICATES $API_OAUTH_TOKEN -d code="$DROPBOX_ACCESS_CODE" -d grant_type=authorization_code -u "$DROPBOX_APP_KEY:$DROPBOX_APP_SECRET" -o "$RESPONSE_FILE" 2>/dev/null
     check_http_response
     OAUTH_REFRESH_TOKEN=$(sed -n 's/.*"refresh_token": "\([^"]*\).*/\1/p' "$RESPONSE_FILE")
 
     {
-        echo "CONFIGFILE_VERSION=2.0"
-        echo "OAUTH_APP_KEY=$OAUTH_APP_KEY"
-        echo "OAUTH_APP_SECRET=$OAUTH_APP_SECRET"
+        echo "CONFIGFILE_VERSION=1.0"
+        echo "OAUTH_APP_KEY=$DROPBOX_APP_KEY"
+        echo "OAUTH_APP_SECRET=$DROPBOX_APP_SECRET"
         echo "OAUTH_REFRESH_TOKEN=$OAUTH_REFRESH_TOKEN"
     } > "$CONFIG_FILE"
-    echo "   The configuration has been saved."
+    echo "The configuration has been saved."
 
     remove_temp_files
     exit 0

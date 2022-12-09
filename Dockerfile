@@ -6,6 +6,11 @@ ENV TZ=UTC
 # set cron default if not defined in ENVs
 ENV CRON="0 1 * * *"
 
+# set empty ENVs for Dropbox API IDs and secrets
+ENV DROPBOX_APP_KEY=""
+ENV DROPBOX_APP_SECRET=""
+ENV DROPBOX_ACCESS_CODE=""
+
 # install sqlite, curl, bash (for script)
 RUN apk add --no-cache \
     sqlite \

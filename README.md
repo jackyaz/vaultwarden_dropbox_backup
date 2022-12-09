@@ -12,23 +12,32 @@ Run this image alongside your Vaultwarden container for automated nightly (1AM U
 - Pick a secure `BACKUP_ENCRYPTION_KEY`. This is for added protection and will be needed when decrypting your backups. An example command to generate a key is `openssl rand -base64 48`
 - Follow the steps below to grant upload access to your Dropbox account.
 - This image will always run an extra backup on container start (regardless of cron interval) to ensure your setup is working.
-- Interactive mode (see [Initial setup](#Initial-setup)) is only needed for the first run to create the configuration file. If you re-create the container with the same `/config` volume mount, the container will not need to be run in interactive mode. 
 - Supports an optional `DELETE_AFTER` environment variable which is used to delete old backups after X many days. This job is executed with each backup cron job run.
 - Set local timezone using the `TZ` environmental variable - set to your zone as seen from [this list](https://manpages.ubuntu.com/manpages/bionic/man3/DateTime::TimeZone::Catalog.3pm.html)
 
 ### Initial setup
-1. Open the following URL in your Browser, and log in using your account: https://www.dropbox.com/developers/apps
-2. Click on "Create App", then select "Choose an API: Scoped Access"
+1. Open the following URL in your browser and log in using your account: https://www.dropbox.com/developers/apps
+2. Click on "Create App" then select "Choose an API: Scoped Access"
 3. Choose the type of access you need: "App folder"
 4. Enter the "App Name" that you prefer (e.g. MyVaultBackups); must be unique
-5. Now, click on the "Create App" button.
-6. Now the new configuration is opened, switch to tab "permissions" and check "files.metadata.read/write" and "files.content.read/write"
-7. Now, click on the "Submit" button.
-8. Once your app is created, you can find your "App key" and "App secret" in the "Settings" tab.
-9. Run the container in interactive mode (`docker run -it <...>`) to create the configuration. 
-   If you are using a GUI like Portainer to create the container, you will need to attach to the container. The first input to provide once attached is the App key.
-10. Follow the steps in the terminal.
-11. Press `Ctrl+P` followed by `Ctrl+Q` to exit interactive mode / detach and keep the container running.
+5. Click "Create App"
+6. Switch to the "Permissions" tab and check "files.metadata.read/write" and "files.content.read/write"
+7. Click "Submit"
+8. Once your app is created, you can find your "App key" and "App secret" in the "Settings" tab
+9. Navigate to the below URL, replacing DROPBOX_APP_KEY with your App key from step 8
+   
+   `https://www.dropbox.com/oauth2/authorize?client_id=DROPBOX_APP_KEY&token_access_type=offline&response_type=code`
+   This will provide you with a short-lived access code
+10. Create the below 3 environment variables for the Docker container:
+
+    `DROPBOX_APP_KEY=<your Dropbox App key>`
+
+    `DROPBOX_APP_SECRET=<your Dropbox App secret>`
+
+    `DROPBOX_ACCESS_CODE=<your Dropbox short-lived token>`
+
+    Make sure to remove the surrounding `< >` when setting the variables!
+11. Start the container. This will use the environment variables to request a refresh token from Dropbox and store all required fields in /config/.dropbox_uploader within the container (this should have been mapped in point 3 of `How to Use`)
 
 ### Decrypting Backup
 `openssl enc -d -aes256 -salt -pbkdf2 -in mybackup.tar.gz | tar xz --strip-components=1`
