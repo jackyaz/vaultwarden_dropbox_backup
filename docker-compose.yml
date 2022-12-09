@@ -7,7 +7,7 @@ services:
       - /path/to/bwdata:/data 
       - /path/to/config:/config
     environment:
-      - BACKUP_ENCRYPTION_KEY=xxx
+      - BACKUP_ENCRYPTION_KEY=xxxyyyzzz
       - CRON="0 1 * * *"
       - TZ=Europe/London #set local timezone using TZ database name standard as seen - https://manpages.ubuntu.com/manpages/bionic/man3/DateTime::TimeZone::Catalog.3pm.html
-      #- DELETE_AFTER=10
+      - DELETE_AFTER=30
