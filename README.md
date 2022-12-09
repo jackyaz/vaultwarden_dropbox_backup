@@ -27,6 +27,7 @@ Run this image alongside your Vaultwarden container for automated nightly (1AM U
 9. Navigate to the below URL, replacing DROPBOX_APP_KEY with your App key from step 8
    
    `https://www.dropbox.com/oauth2/authorize?client_id=DROPBOX_APP_KEY&token_access_type=offline&response_type=code`
+   
    This will provide you with a short-lived access code
 10. Create the below 3 environment variables for the Docker container:
 
