@@ -1533,7 +1533,7 @@ if [[ -e $CONFIG_FILE ]]; then
     fi
 # NEW SETUP...
 else
-    echo -ne "\n Running first time setup to retrieve Dropbox refresh token...\n\n"
+    echo -ne "\nRunning first time setup to retrieve Dropbox refresh token...\n\n"
 
     $CURL_BIN $CURL_ACCEPT_CERTIFICATES $API_OAUTH_TOKEN -d code="$DROPBOX_ACCESS_CODE" -d grant_type=authorization_code -u "$DROPBOX_APP_KEY:$DROPBOX_APP_SECRET" -o "$RESPONSE_FILE" 2>/dev/null
     check_http_response
