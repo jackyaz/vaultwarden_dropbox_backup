@@ -4,9 +4,10 @@ services:
     image: jackyaz/vaultwarden_dropbox_backup:latest
     restart: always
     volumes:
-      - ./bwdata:/data 
-      - ./config:/config
+      - /path/to/bwdata:/data 
+      - /path/to/config:/config
     environment:
       - BACKUP_ENCRYPTION_KEY=xxx
+      - CRON="0 1 * * *"
+      - TZ=Europe/London #set local timezone using TZ database name standard as seen - https://manpages.ubuntu.com/manpages/bionic/man3/DateTime::TimeZone::Catalog.3pm.html
       #- DELETE_AFTER=10
-      #- TZ=Europe/London #set local timezone using TZ database name standard as seen - https://manpages.ubuntu.com/manpages/bionic/man3/DateTime::TimeZone::Catalog.3pm.html

@@ -3,6 +3,9 @@ FROM alpine:latest
 # set TZ default if not defined in ENVs
 ENV TZ=UTC
 
+# set cron default if not defined in ENVs
+ENV CRON="0 1 * * *"
+
 # install sqlite, curl, bash (for script)
 RUN apk add --no-cache \
     sqlite \
@@ -32,6 +35,6 @@ RUN chmod +x /entrypoint.sh && \
     chmod +x /dropbox_uploader.sh && \
     chmod +x /deleteold.sh
 
-RUN echo "0 1 * * * /backup.sh" > /etc/crontabs/root
+RUN echo "${CRON} /backup.sh" > /etc/crontabs/root
 
 ENTRYPOINT ["/entrypoint.sh"]
