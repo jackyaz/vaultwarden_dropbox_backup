@@ -590,7 +590,8 @@ function db_simple_upload_file
 
     print " > Uploading \"$FILE_SRC\" to \"$FILE_DST\"... $LINE_CR"
     ensure_accesstoken
-    $CURL_BIN $CURL_ACCEPT_CERTIFICATES "$CURL_PARAMETERS" -X POST -i --globoff -o "$RESPONSE_FILE" --header "Authorization: Bearer $OAUTH_ACCESS_TOKEN" --header "Dropbox-API-Arg: {\"path\": \"$FILE_DST\",\"mode\": \"overwrite\",\"autorename\": true,\"mute\": false}" --header "Content-Type: application/octet-stream" --data-binary @"$FILE_SRC" "$API_UPLOAD_URL"
+    # shellcheck disable=SC2086
+    $CURL_BIN $CURL_ACCEPT_CERTIFICATES $CURL_PARAMETERS -X POST -i --globoff -o "$RESPONSE_FILE" --header "Authorization: Bearer $OAUTH_ACCESS_TOKEN" --header "Dropbox-API-Arg: {\"path\": \"$FILE_DST\",\"mode\": \"overwrite\",\"autorename\": true,\"mute\": false}" --header "Content-Type: application/octet-stream" --data-binary @"$FILE_SRC" "$API_UPLOAD_URL"
     check_http_response
 
     # Check
@@ -658,7 +659,8 @@ function db_chunked_upload_file
         # Uploading the chunk...
         echo > "$RESPONSE_FILE"
         ensure_accesstoken
-        $CURL_BIN $CURL_ACCEPT_CERTIFICATES -X POST "$CURL_PARAMETERS" --show-error --globoff -i -o "$RESPONSE_FILE" --header "Authorization: Bearer $OAUTH_ACCESS_TOKEN" --header "Dropbox-API-Arg: {\"cursor\": {\"session_id\": \"$SESSION_ID\",\"offset\": $OFFSET},\"close\": false}" --header "Content-Type: application/octet-stream" --data-binary @"$CHUNK_FILE" "$API_CHUNKED_UPLOAD_APPEND_URL"
+        # shellcheck disable=SC2086
+        $CURL_BIN $CURL_ACCEPT_CERTIFICATES -X POST $CURL_PARAMETERS --show-error --globoff -i -o "$RESPONSE_FILE" --header "Authorization: Bearer $OAUTH_ACCESS_TOKEN" --header "Dropbox-API-Arg: {\"cursor\": {\"session_id\": \"$SESSION_ID\",\"offset\": $OFFSET},\"close\": false}" --header "Content-Type: application/octet-stream" --data-binary @"$CHUNK_FILE" "$API_CHUNKED_UPLOAD_APPEND_URL"
         # check_http_response not needed, because we have to retry the request in case of error
 
         # Check
@@ -871,7 +873,8 @@ function db_download_file
 
     print " > Downloading \"$FILE_SRC\" to \"$FILE_DST\"... $LINE_CR"
     ensure_accesstoken
-    $CURL_BIN $CURL_ACCEPT_CERTIFICATES "$CURL_PARAMETERS" -X POST --globoff -D "$RESPONSE_FILE" -o "$FILE_DST" --header "Authorization: Bearer $OAUTH_ACCESS_TOKEN" --header "Dropbox-API-Arg: {\"path\": \"$FILE_SRC\"}" "$API_DOWNLOAD_URL"
+    # shellcheck disable=SC2086
+    $CURL_BIN $CURL_ACCEPT_CERTIFICATES $CURL_PARAMETERS -X POST --globoff -D "$RESPONSE_FILE" -o "$FILE_DST" --header "Authorization: Bearer $OAUTH_ACCESS_TOKEN" --header "Dropbox-API-Arg: {\"path\": \"$FILE_SRC\"}" "$API_DOWNLOAD_URL"
     check_http_response
 
     # Check
