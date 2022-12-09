@@ -19,6 +19,9 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 
+# shellcheck disable=SC2155
+# shellcheck disable=SC1090
+
 #Default configuration file
 CONFIG_FILE=~/.dropbox_uploader
 
@@ -67,7 +70,7 @@ APP_CREATE_URL="https://www.dropbox.com/developers/apps"
 RESPONSE_FILE="$TMP_DIR/du_resp_$RANDOM"
 CHUNK_FILE="$TMP_DIR/du_chunk_$RANDOM"
 TEMP_FILE="$TMP_DIR/du_tmp_$RANDOM"
-AUTH_ACCESS_TOKEN_EXPIRE="0"
+OAUTH_ACCESS_TOKEN_EXPIRE="0"
 BIN_DEPS="sed basename date grep stat dd mkdir"
 VERSION="1.0"
 
@@ -122,7 +125,7 @@ while getopts ":qpskdhf:x:" opt; do
     ;;
 
     x)
-      EXCLUDE+=( $OPTARG )
+      IFS=" " read -r -a EXCLUDE <<< "$OPTARG"
     ;;
 
     \?)
@@ -152,8 +155,8 @@ if [[ $CURL_BIN == "" ]]; then
 fi
 
 #Dependencies check
-which $BIN_DEPS > /dev/null
-if [[ $? != 0 ]]; then
+
+if ! which $BIN_DEPS > /dev/null; then
     for i in $BIN_DEPS; do
         which $i > /dev/null ||
             NOT_FOUND="$i $NOT_FOUND"
@@ -559,7 +562,7 @@ function db_upload_file
     if [[ $TYPE != "ERR" ]]; then
         sha_src=$(db_sha_local "$FILE_SRC")
         sha_dst=$(db_sha "$FILE_DST")
-        if [[ $sha_src == $sha_dst && $sha_src != "ERR" ]]; then
+        if [[ $sha_src == "$sha_dst" && "$sha_src" != "ERR" ]]; then
             print "> Skipping file \"$FILE_SRC\", file exists with the same hash\n"
             return
         fi
@@ -626,12 +629,12 @@ function db_chunked_upload_file
 
     local FILE_SIZE=$(file_size "$FILE_SRC")
     local OFFSET=0
-    local UPLOAD_ID=""
+    #local UPLOAD_ID=""
     local UPLOAD_ERROR=0
-    local CHUNK_PARAMS=""
+    #local CHUNK_PARAMS=""
 
     ## Ceil division
-    let NUMBEROFCHUNK=($FILE_SIZE/1024/1024+$CHUNK_SIZE-1)/$CHUNK_SIZE
+    let NUMBEROFCHUNK=$((FILE_SIZE/1024/1024+CHUNK_SIZE-1))/$CHUNK_SIZE
 
     if [[ $VERBOSE == 1 ]]; then
         print " > Uploading \"$FILE_SRC\" to \"$FILE_DST\" by $NUMBEROFCHUNK chunks ...\n"
@@ -865,7 +868,7 @@ function db_download_file
     if [[ $TYPE != "ERR" ]]; then
         sha_src=$(db_sha "$FILE_SRC")
         sha_dst=$(db_sha_local "$FILE_DST")
-        if [[ $sha_src == $sha_dst && $sha_src != "ERR" ]]; then
+        if [[ $sha_src == "$sha_dst" && "$sha_src" != "ERR" ]]; then
             print "> Skipping file \"$FILE_SRC\", file exists with the same hash\n"
             return
         fi
@@ -1131,7 +1134,6 @@ function db_mkdir
 #$2 = Cursor (Optional)
 function db_list_outfile
 {
-
     local DIR_DST="$1"
     local HAS_MORE="false"
     local CURSOR=""
@@ -1175,7 +1177,7 @@ function db_list_outfile
 
                 local FILE=$(echo "$line" | sed -n 's/.*"path_display": *"\([^"]*\)".*/\1/p')
                 local TYPE=$(echo "$line" | sed -n 's/.*".tag": *"\([^"]*\).*/\1/p')
-                local SIZE=$(convert_bytes $(echo "$line" | sed -n 's/.*"size": *\([0-9]*\).*/\1/p'))
+                local SIZE=$(convert_bytes "$(echo "$line" | sed -n 's/.*"size": *\([0-9]*\).*/\1/p')")
 
                 echo -e "$FILE:$TYPE;$SIZE" >> "$OUT_FILE"
 
@@ -1440,7 +1442,7 @@ function db_search
 
         local FILE=$(echo "$line" | sed -n 's/.*"path_display": *"\([^"]*\)".*/\1/p')
         local TYPE=$(echo "$line" | sed -n 's/.*".tag": *"\([^"]*\).*/\1/p')
-        local SIZE=$(convert_bytes $(echo "$line" | sed -n 's/.*"size": *\([0-9]*\).*/\1/p'))
+        local SIZE=$(convert_bytes "$(echo "$line" | sed -n 's/.*"size": *\([0-9]*\).*/\1/p')")
 
         echo -e "$FILE:$TYPE;$SIZE" >> "$RESPONSE_FILE"
 
