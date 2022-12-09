@@ -9,7 +9,7 @@ Run this image alongside your Vaultwarden container for automated nightly (1AM U
 - Pre-built images are available at `jackyaz/vaultwarden_dropbox_backup`.
 - Volume mount the `/data` folder your vaultwarden container uses.
 - Volume mount the `/config` folder that will contain the Dropbox Uploader configuration (Dropbox app key, secret and refresh token). See Initial setup for more details.
-- Pick a secure `BACKUP_ENCRYPTION_KEY`. This is for added protection and will be needed when decrypting your backups.
+- Pick a secure `BACKUP_ENCRYPTION_KEY`. This is for added protection and will be needed when decrypting your backups. An example command to generate a key is `openssl rand -base64 48`
 - Follow the steps below to grant upload access to your Dropbox account.
 - This image will always run an extra backup on container start (regardless of cron interval) to ensure your setup is working.
 - Interactive mode (see [Initial setup](#Initial-setup)) is only needed for the first run to create the configuration file. If you re-create the container with the same `/config` volume mount, the container will not need to be run in interactive mode. 
@@ -27,12 +27,11 @@ Run this image alongside your Vaultwarden container for automated nightly (1AM U
 8. Once your app is created, you can find your "App key" and "App secret" in the "Settings" tab.
 9. Run the container in interactive mode (`docker run -it <...>`) to create the configuration. 
    If you are using a GUI like Portainer to create the container, you will need to attach to the container. The first input to provide once attached is the App key.
-
 10. Follow the steps in the terminal.
 11. Press `Ctrl+P` followed by `Ctrl+Q` to exit interactive mode / detach and keep the container running.
 
 ### Decrypting Backup
-`openssl enc -d -aes256 -salt -pbkdf2 -in mybackup.tar.gz | tar xz --strip-components=1 -C my-folder`
+`openssl enc -d -aes256 -salt -pbkdf2 -in mybackup.tar.gz | tar xz --strip-components=1`
 
 ### Restoring Backup to Vaultwarden
 Volume mount the decrypted `./bwdata` folder to your vaultwarden container. Done!
