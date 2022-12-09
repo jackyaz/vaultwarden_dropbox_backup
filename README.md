@@ -6,7 +6,6 @@ Run this image alongside your Vaultwarden container for automated nightly (1AM U
 **Note:** Encrypting Vaultwarden backups is not required since the data is already encrypted with user master passwords. We've added this for good practice and added obfuscation should your Dropbox account get compromised.
 
 ## How to Use
-- It's highly recommend you run via the `docker-compose.yml` provided.
 - Pre-built images are available at `jackyaz/vaultwarden_dropbox_backup`.
 - Volume mount the `/data` folder your vaultwarden container uses.
 - Volume mount the `/config` folder that will contain the Dropbox Uploader configuration (Dropbox app key, secret and refresh token). See Initial setup for more details.
