@@ -5,10 +5,10 @@ DATE_NOW=$(date +%s)
 
 /dropbox_uploader.sh -f /config/.dropbox_uploader list | grep "vaultwarden_" | while read -r LINE; do
   # example "LINE":
-  # [F] 6688 db.sqlite3_2021-01-02-063033_1609569033.tar.gz"
+  # [F] 6688 vaultwarden_2021-01-02-063033_1609569033.tar.gz"
 
   # example "BACKUP_FILENAME": (tokenize on default whitespace)
-  # db.sqlite3_2021-01-02-063033.tar.gz
+  # vaultwarden_2021-01-02-063033.tar.gz
   BACKUP_FILENAME=$(echo "$LINE" | awk '{ print $3 }')
 
   # example "BACKUP_DATE": (tokenize on _ & -)
