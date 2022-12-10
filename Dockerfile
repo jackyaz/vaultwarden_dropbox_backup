@@ -40,6 +40,4 @@ RUN chmod +x /entrypoint.sh && \
     chmod +x /dropbox_uploader.sh && \
     chmod +x /deleteold.sh
 
-RUN echo "${CRON} /backup.sh" > /etc/crontabs/root
-
 ENTRYPOINT ["/entrypoint.sh"]

@@ -6,5 +6,7 @@
 # run backup once on container start to ensure it works
 /backup.sh
 
+echo "${CRON} /backup.sh" > /etc/crontabs/root
+
 # start crond in foreground
 exec crond -f
